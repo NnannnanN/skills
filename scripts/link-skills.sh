@@ -13,7 +13,7 @@ set -euo pipefail
 # to keep installed skills up to date.
 
 REPO="$(cd "$(dirname "$0")/.." && pwd)"
-DESTS=("$HOME/.claude/skills" "$HOME/.agents/skills")
+DESTS=("$REPO/.agents/skills" "$HOME/.claude/skills" "$HOME/.agents/skills")
 
 # Collect the repo's skills once, link into every destination. `deprecated/`
 # is retired, and `misc/` is kept around but rarely used and not promoted (see
@@ -34,7 +34,7 @@ for DEST in "${DESTS[@]}"; do
   # If $DEST is a symlink that resolves into this repo, we'd end up writing the
   # per-skill symlinks back into the repo's own skills/ tree. Detect and bail
   # out instead of polluting the working copy.
-  if [ -L "$DEST" ]; then
+  if [ "$DEST" != "$REPO/.agents/skills" ] && [ -L "$DEST" ]; then
     resolved="$(readlink -f "$DEST")"
     case "$resolved" in
       "$REPO"|"$REPO"/*)
@@ -56,7 +56,12 @@ for DEST in "${DESTS[@]}"; do
       rm -rf "$target"
     fi
 
-    ln -sfn "$src" "$target"
+    if [ "$DEST" = "$REPO/.agents/skills" ]; then
+      rel_src="../../${src#"$REPO/"}"
+      ln -sfn "$rel_src" "$target"
+    else
+      ln -sfn "$src" "$target"
+    fi
     echo "linked $name -> $src ($DEST)"
   done
 done

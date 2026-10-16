@@ -34,7 +34,7 @@ Use this template for writing the PR body:
 
 ## Sections
 
-Skip all preambles and keep prose brief. Use the user's domain language from `GLOSSARY.md`.
+Skip all preambles and keep prose brief. Write the PR body and explanations in **Japanese**, and use the user's domain language from `GLOSSARY.md`. (If you need to ask the user a question, use the `ask_question` tool.)
 
 ### Summary
 

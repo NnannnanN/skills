@@ -111,4 +111,11 @@ Good interfaces make testing natural:
 ## Going deeper
 
 - **Deepening a cluster given its dependencies**, see [DEEPENING.md](DEEPENING.md): dependency categories, seam discipline, and replace-don't-layer testing.
-- **Exploring alternative interfaces**, see [DESIGN-IT-TWICE.md](DESIGN-IT-TWICE.md): spin up parallel sub-agents to design the interface several radically different ways, then compare on depth, locality, and seam placement.
+- **Exploring alternative interfaces**, see [DESIGN-IT-TWICE.md](DESIGN-IT-TWICE.md): spin up parallel subagents via `invoke_subagent` to design the interface several radically different ways, then compare on depth, locality, and seam placement.
+
+## Antigravity & AI Studio (`gemini-4-argon`) Conventions
+
+- **Output language**: Present all interface designs, comparisons, and explanations in **Japanese**.
+- **Questions**: Use the `ask_question` tool (one question at a time) whenever asking the user to choose or refine an interface design.
+- **Deep interface design (`gemini-4-argon`)**: When designing complex module seams or comparing competing interface trade-offs, invoke `.agents/scripts/call_argon.py` via `run_command` (after verifying `GEMINI_API_KEY` in `./.env`, OS env `GEMINI_API_KEY`, or `~/.gemini/.env`):
+  - `uv run .agents/scripts/call_argon.py "<interface design prompt>" -f <module-file>` (or `python3 .agents/scripts/call_argon.py ...` on Linux/macOS, `python .agents/scripts/call_argon.py ...` on Windows).

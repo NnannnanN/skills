@@ -65,10 +65,18 @@ When a term is resolved, update `GLOSSARY.md` right there. Don't batch these up:
 
 ### Offer ADRs sparingly
 
-Only offer to create an ADR when all three are true:
+Only offer (using `ask_question`) to create an ADR when all three are true:
 
 1. **Hard to reverse**: the cost of changing your mind later is meaningful
 2. **Surprising without context**: a future reader will wonder "why did they do it this way?"
 3. **The result of a real trade-off**: there were genuine alternatives and you picked one for specific reasons
 
 If any of the three is missing, skip the ADR. Use the format in [ADR-FORMAT.md](./ADR-FORMAT.md).
+
+## Antigravity & AI Studio (`gemini-4-argon`) Conventions
+
+- **Output language**: Write all glossary definitions (`GLOSSARY.md`), `GLOSSARY-MAP.md`, ADRs (`docs/adr/*.md`), and user communications in **Japanese**.
+- **Questions**: Whenever you challenge a term, sharpen fuzzy language, or ask whether to record an ADR, always call the built-in `ask_question` tool (one question at a time).
+- **File operations**: Use `view_file`, `write_to_file`, and `replace_file_content` with forward-slash (`/`) paths.
+- **Deep domain reasoning (`gemini-4-argon`)**: When resolving subtle bounded-context boundaries or complex domain invariants across modules, invoke `.agents/scripts/call_argon.py` via `run_command` (after verifying `GEMINI_API_KEY` in `./.env`, the `GEMINI_API_KEY` environment variable, or `~/.gemini/.env`):
+  - `uv run .agents/scripts/call_argon.py "<domain modeling question>" -f GLOSSARY.md` (or `python3 .agents/scripts/call_argon.py ...` on Linux/macOS, `python .agents/scripts/call_argon.py ...` on Windows).

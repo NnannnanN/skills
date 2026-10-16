@@ -6,11 +6,11 @@ disable-model-invocation: true
 
 <what-to-do>
 
-This is pure **explore**: widen the space of what could be written without committing to structure. Committing is _exploit_, a separate skill's job. Run a grilling session that produces fragments, interviewing the user relentlessly about whatever they want to write about. Imposing phases, outlines, or article structure is out of scope here.
+This is pure **explore**: widen the space of what could be written without committing to structure. Committing is _exploit_, a separate skill's job. Run a grilling session in **Japanese** (asking one question at a time via the `ask_question` tool) that produces fragments, interviewing the user relentlessly about whatever they want to write about. Imposing phases, outlines, or article structure is out of scope here.
 
-As fragments emerge from either side of the conversation, append them to a single markdown file.
+As fragments emerge from either side of the conversation, append them in **Japanese** to a single markdown file (`view_file` then `write_to_file` / `replace_file_content`).
 
-If the user did not pass a path, ask once where to save the document, then remember it for the rest of the session.
+If the user did not pass a path, ask once via `ask_question` where to save the document, then remember it for the rest of the session.
 
 Capture fragments from the very first thing the user says, including the initial prompt.
 

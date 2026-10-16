@@ -7,13 +7,20 @@ description: Diagnosis loop for hard bugs and performance regressions. Use when 
 
 A discipline for hard bugs. Skip phases only when explicitly justified.
 
-When exploring the codebase, read `GLOSSARY.md` (if it exists) to get a clear mental model of the relevant modules, and check ADRs in the area you're touching.
+When exploring the codebase, read `GLOSSARY.md` (if it exists) via `view_file` to get a clear mental model of the relevant modules, and check ADRs in the area you're touching.
+
+## Antigravity & AI Studio (`gemini-4-argon`) Conventions
+
+- **Output language**: Present all diagnostic findings, hypotheses, loop outputs, and explanations in **Japanese**.
+- **Questions**: Whenever you need input or confirmation from the user (e.g. when a loop cannot be built or when reviewing ranked hypotheses), call the built-in `ask_question` tool (one question at a time).
+- **Hard root-cause analysis (`gemini-4-argon`)**: In Phase 3 (Hypothesise) or when a complex bug resists initial hypotheses across multiple modules, invoke `.agents/scripts/call_argon.py` via `run_command` (after verifying `GEMINI_API_KEY` in `./.env`, OS env `GEMINI_API_KEY`, or `~/.gemini/.env`) with the minimal repro and relevant files to generate or sharpen falsifiable hypotheses:
+  - `uv run .agents/scripts/call_argon.py "<symptom and minimal repro>" -f <suspect-file>` (or `python3 .agents/scripts/call_argon.py ...` on Linux/macOS, `python .agents/scripts/call_argon.py ...` on Windows).
 
 ## Redact
 
 This skill has you show commands, outputs and captured artifacts. **Redact every secret first**: write `<REDACTED>` in its place. Build loops against env vars, so the credential stays in the environment rather than in what you show. Captured artifacts carry auth headers: quote only the lines that carry the signal.
 
-If the redacted output is not enough to diagnose the bug, say so and ask the user.
+If the redacted output is not enough to diagnose the bug, say so and ask the user via `ask_question`.
 
 ## Phase 1: Build a feedback loop
 
@@ -52,11 +59,11 @@ The goal is not a clean repro but a **higher reproduction rate**. Loop the trigg
 
 ### When you genuinely cannot build a loop
 
-Stop and say so explicitly. List what you tried. Ask the user for: (a) access to whatever environment reproduces it, (b) a redacted captured artifact (HAR file, log dump, core dump, screen recording with timestamps), or (c) permission to add temporary production instrumentation. Do **not** proceed to hypothesise without a loop.
+Stop and say so explicitly. List what you tried. Ask the user via `ask_question` for: (a) access to whatever environment reproduces it, (b) a redacted captured artifact (HAR file, log dump, core dump, screen recording with timestamps), or (c) permission to add temporary production instrumentation. Do **not** proceed to hypothesise without a loop.
 
 ### Completion criterion: a tight loop that goes red
 
-Phase 1 is done when the loop is **tight** and **red-capable**: you can name **one command** (a script path, a test invocation, a curl) that you have **already run at least once** (show the invocation and its output, redacted), and that is:
+Phase 1 is done when the loop is **tight** and **red-capable**: you can name **one command** (a script path, a test invocation, a curl) that you have **already run at least once** via `run_command` (show the invocation and its output, redacted), and that is:
 
 - [ ] **Red-capable**: it drives the actual bug code path and asserts the **user's exact symptom**, so it can go red on this bug and green once fixed. Not "runs without erroring"; it must be able to _catch this specific bug_.
 - [ ] **Deterministic**: same verdict every run (flaky bugs: a pinned, high reproduction rate, per above).
@@ -87,7 +94,7 @@ Do not proceed until you have reproduced **and** minimised.
 
 ## Phase 3: Hypothesise
 
-Generate **3–5 ranked hypotheses** before testing any of them. Single-hypothesis generation anchors on the first plausible idea.
+Generate **3–5 ranked hypotheses** (in Japanese) before testing any of them. Single-hypothesis generation anchors on the first plausible idea. When the failure spans multiple modules or has subtle state interactions, run `.agents/scripts/call_argon.py` via `run_command` to assist with deep root-cause hypothesis generation.
 
 Each hypothesis must be **falsifiable**: state the prediction it makes.
 
